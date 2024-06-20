@@ -17,12 +17,22 @@ class KategoriController extends Controller
 
     public function store(Request $request)
     {
-    
+        $request->validate([
+            'deskripsi' => 'required',
+            'kategori' => 'required|M,A,BHP,BTHP'
+        ]);
+
+        Kategori::create([
+            'deskripsi' =>$request->deskripsi,
+            'kategori' =>$request->kategori
+        ]);
+
+        return response()->json(['success' => 'Data Berhasil Disimpan'], 201);
     }
 
     public function show(string $id)
     {
-
+        
     }
 
     /**
