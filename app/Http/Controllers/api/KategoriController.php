@@ -40,12 +40,25 @@ class KategoriController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        request->validate([
+            'deskripsi' => 'required',
+            'kategori' => 'required|in:M,A,BHP,BTHP',
+        ]);
+
+        $kategori = Kategori::find($id);
+
+        if ($kategori) {
+            $kategori->update([
+                'deskripsi' => $request->deskripsi,
+                'kategori' => $request->kategori,
+            ]);
+
+            return response()->json(['success' => 'Data Berhasil Diubah!']);
+        } else {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
     }
 
     /**
