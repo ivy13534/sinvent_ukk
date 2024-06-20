@@ -61,11 +61,15 @@ class KategoriController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $kategori = Kategori::find($id);
+
+        if ($kategori) {
+            $kategori->delete();
+            return response()->json(['success' => 'Data Berhasil Dihapus!']);
+        } else {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
     }
 }
