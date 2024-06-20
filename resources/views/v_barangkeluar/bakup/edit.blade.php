@@ -59,15 +59,10 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="font-weight-bold">Kategori</label>
-                                <select class="form-control @error('kategori_id') is-invalid @enderror" name="kategori_id">
-                                    <option value="">Pilih Kategori</option>
-                                    @foreach($aKategori as $key => $value)
-                                        <option value="{{ $key }}" {{ old('kategori_id',$rsetBarang->kategori_id) == $key ? 'selected' : '' }}>{{ $value }}</option>
-                                    @endforeach
-                                </select>
-
-                                <!-- error message untuk kategori_id -->
+                                <label class="font-weight-bold">kategori_id</label>
+                                <input type="number" class="form-control @error('kategori_id') is-invalid @enderror" name="kategori_id" value="{{ old('kategori_id',$rsetBarang->kategori_id) }}" placeholder="Masukkan Nomor Induk Siswa">
+                            
+                                <!-- error message untuk seri -->
                                 @error('kategori_id')
                                     <div class="alert alert-danger mt-2">
                                         {{ $message }}
@@ -75,12 +70,18 @@
                                 @enderror
                             </div>
 
+
+                            
+
                             <button type="submit" class="btn btn-md btn-primary">SIMPAN</button>
                             <button type="reset" class="btn btn-md btn-warning">RESET</button>
 
                         </form> 
                     </div>
                 </div>
+
+ 
+
             </div>
         </div>
     </div>

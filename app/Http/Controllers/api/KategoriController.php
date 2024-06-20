@@ -1,48 +1,45 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Kategori;
+use Illuminate\Http\Request;
 
 class KategoriController extends Controller
 {
-
     public function index()
     {
         $rsetKategori = Kategori::all();
         return response()->json($rsetKategori);
     }
-
     public function store(Request $request)
     {
         $request->validate([
             'deskripsi' => 'required',
-            'kategori' => 'required|M,A,BHP,BTHP'
+            'kategori' => 'required|in:M,A,BHP,BTHP',
         ]);
 
         Kategori::create([
-            'deskripsi' =>$request->deskripsi,
-            'kategori' =>$request->kategori
+            'deskripsi' => $request->deskripsi,
+            'kategori' => $request->kategori,
         ]);
 
-        return response()->json(['success' => 'Data Berhasil Disimpan'], 201);
+        return response()->json(['success' => 'Data Berhasil Disimpan!'], 201);
     }
-
-    public function show(string $id)
+    public function show($id)
     {
         $kategori = Kategori::find($id);
+
         if ($kategori) {
             return response()->json($kategori);
         } else {
             return response()->json(['message' => 'Category not found'], 404);
         }
     }
-
     public function update(Request $request, $id)
     {
-        request->validate([
+        $request->validate([
             'deskripsi' => 'required',
             'kategori' => 'required|in:M,A,BHP,BTHP',
         ]);
@@ -60,7 +57,6 @@ class KategoriController extends Controller
             return response()->json(['message' => 'Category not found'], 404);
         }
     }
-
     public function destroy($id)
     {
         $kategori = Kategori::find($id);

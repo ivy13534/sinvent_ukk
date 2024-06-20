@@ -7,4 +7,5 @@ use App\Http\Controllers\api\KategoriController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
 Route::resource('kategori',KategoriController::class);
