@@ -32,7 +32,12 @@ class KategoriController extends Controller
 
     public function show(string $id)
     {
-        
+        $kategori = Kategori::find($id);
+        if ($kategori) {
+            return response()->json($kategori);
+        } else {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
     }
 
     /**
