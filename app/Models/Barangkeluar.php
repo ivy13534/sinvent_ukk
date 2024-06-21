@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Barang;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class BarangKeluar extends Model
+class Barangkeluar extends Model
 {
     use HasFactory;
 
-    protected $table = 'barangkeluar';
-    protected $primaryKey = 'id';
+    protected $table ='barangkeluar';
+
     protected $fillable = [
         'tgl_keluar',
         'qty_keluar',
@@ -20,6 +19,6 @@ class BarangKeluar extends Model
 
     public function barang()
     {
-        return $this->belongsTo(Barang::class);
+        return $this->belongsTo(Barang::class, 'barang_id');
     }
 }

@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>JagoKoding</title>
+    <title>UKKLARAV</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{ asset('theme/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -37,8 +37,11 @@
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
-                        <!-- <div class="col-lg-6 d-none d-lg-block bg-login-image"></div> -->
-                            <div class="col-lg-6 d-none d-lg-block bg-danger"></div>
+                        <div class="col-lg-6 d-none d-lg-block bg-login-image" style=" background: url('https://www.marketernity.com/wp-content/uploads/2020/04/undraw_data_trends_b0wg.png'); 
+                            background-position: center;
+                            background-size: cover;
+                            background-repeat: no-repeat;">
+                            </div>
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">

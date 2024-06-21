@@ -6,15 +6,15 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('barang.update',$rsetBarang->id) }}" method="POST" enctype="multipart/form-data">                    
+                        <form action="{{ route('barang.update', $rsetBarang->id) }}" method="POST" enctype="multipart/form-data">                    
                             @csrf
                             @method('PUT')
 
                             <div class="form-group">
-                                <label class="font-weight-bold">merk</label>
-                                <input type="text" class="form-control @error('merk') is-invalid @enderror" name="merk" value="{{ old('merk',$rsetBarang->merk) }}" placeholder="Masukkan Nama Siswa">
+                                <label class="font-weight-bold">Merk</label>
+                                <input type="text" class="form-control @error('merk') is-invalid @enderror" name="merk" value="{{ old('merk', $rsetBarang->merk) }}" placeholder="Masukkan Merk">
                             
-                                <!-- error message untuk nama -->
+                                <!-- error message untuk merk -->
                                 @error('merk')
                                     <div class="alert alert-danger mt-2">
                                         {{ $message }}
@@ -23,8 +23,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="font-weight-bold">NIS</label>
-                                <input type="text" class="form-control @error('seri') is-invalid @enderror" name="seri" value="{{ old('seri',$rsetBarang->seri) }}" placeholder="Masukkan Nomor Induk Siswa">
+                                <label class="font-weight-bold">Seri</label>
+                                <input type="text" class="form-control @error('seri') is-invalid @enderror" name="seri" value="{{ old('seri', $rsetBarang->seri) }}" placeholder="Masukkan Seri">
                             
                                 <!-- error message untuk seri -->
                                 @error('seri')
@@ -35,8 +35,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="font-weight-bold">spesifikasi</label>
-                                <input type="text" class="form-control @error('spesifikasi') is-invalid @enderror" name="spesifikasi" value="{{ old('spesifikasi',$rsetBarang->spesifikasi) }}" placeholder="Masukkan Nomor Induk Siswa">
+                                <label class="font-weight-bold">Spesifikasi</label>
+                                <input type="text" class="form-control @error('spesifikasi') is-invalid @enderror" name="spesifikasi" value="{{ old('spesifikasi', $rsetBarang->spesifikasi) }}" placeholder="Masukkan Spesifikasi">
                             
                                 <!-- error message untuk spesifikasi -->
                                 @error('spesifikasi')
@@ -47,10 +47,10 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="font-weight-bold">stok</label>
-                                <input type="number" class="form-control @error('stok') is-invalid @enderror" name="stok" value="{{ old('stok',$rsetBarang->stok) }}" placeholder="Masukkan Nomor Induk Siswa">
-                            
-                                <!-- error message untuk seri -->
+                                <label class="font-weight-bold">Stok</label>
+                                <input type="number" class="form-control" name="stok" value="{{ $rsetBarang->stok }}" readonly>
+                                
+                                <!-- error message untuk stok -->
                                 @error('stok')
                                     <div class="alert alert-danger mt-2">
                                         {{ $message }}
@@ -60,13 +60,13 @@
 
                             <div class="form-group">
                                 <label class="font-weight-bold">Kategori</label>
-                                <select class="form-control @error('kategori_id') is-invalid @enderror" name="kategori_id">
-                                    <option value="">Pilih Kategori</option>
-                                    @foreach($aKategori as $key => $value)
-                                        <option value="{{ $key }}" {{ old('kategori_id',$rsetBarang->kategori_id) == $key ? 'selected' : '' }}>{{ $value }}</option>
+                                <select class="form-control @error('kategori_id') is-invalid @enderror" name="kategori_id" aria-label="Default select example">
+                                    <option value="blank" selected>Pilih Kategori</option>
+                                    @foreach($kategoriID as $rowkategori)
+                                        <option value="{{ $rowkategori->id }}" {{ $rsetBarang->kategori_id == $rowkategori->id ? 'selected' : '' }}>{{ $rowkategori->id }} - {{ $rowkategori->deskripsi }}</option>
                                     @endforeach
                                 </select>
-
+                            
                                 <!-- error message untuk kategori_id -->
                                 @error('kategori_id')
                                     <div class="alert alert-danger mt-2">
@@ -75,7 +75,7 @@
                                 @enderror
                             </div>
 
-                            <button type="submit" class="btn btn-md btn-primary">SIMPAN</button>
+                            <button type="submit" class="btn btn-md btn-primary">UPDATE</button>
                             <button type="reset" class="btn btn-md btn-warning">RESET</button>
 
                         </form> 

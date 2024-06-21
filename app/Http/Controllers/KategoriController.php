@@ -6,154 +6,145 @@ use Illuminate\Http\Request;
 use App\Models\Kategori;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\ServiceProviders;
+
 
 class KategoriController extends Controller
 {
-    use ValidatesRequests;
-
-    /**
+/**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-{
-    // Panggil stored procedure dan simpan hasilnya ke dalam variabel
-    $kategoriData = DB::select('CALL getKategori("kategori")');
+  
+     public function index(Request $request)
+     {
+         $search = $request->input('search');
+     
+         $query = DB::table('kategori')
+                    ->select('id', 'deskripsi', DB::raw('getKategori(kategori) COLLATE utf8mb4_unicode_ci as kat'));
+     
+         if ($search) {
+             $query->where(function ($q) use ($search) {
+                 $q->where('id', 'like', '%' . $search . '%')
+                   ->orWhere('deskripsi', 'like', '%' . $search . '%')
+                   ->orWhere('kategori', 'like', '%' . $search . '%')
+                   ->orWhere(DB::raw('getKategori(kategori) COLLATE utf8mb4_unicode_ci'), 'like', '%' . $search . '%');
+             });
+         }
+     
+         $rsetKategori = $query->paginate(5);
+         Paginator::useBootstrap();
+     
+         return view('v_kategori.index', compact('rsetKategori'));
+     }
+     
 
-    // Ubah hasil pemanggilan stored procedure menjadi array asosiatif untuk kemudian dijadikan map
-    $kategoriMapFromDB = collect($kategoriData)->map(function ($item) {
-        return (array) $item;
-    })->pluck('deskripsi', 'id')->toArray();
-
-    // Buat query builder untuk data kategori
-    $query = DB::table('kategori')->select('id', 'deskripsi', 'kategori');
-
-    // Jika ada parameter pencarian, tambahkan kondisi pencarian
-    if ($request->search) {
-        $query->where('id', 'like', '%' . $request->search . '%')
-            ->orWhere('deskripsi', 'like', '%' . $request->search . '%');
-    }
-
-    // Ambil data kategori menggunakan query builder
-    $rsetKategori = $query->paginate(10);
-
-    // Ubah kode kategori menjadi deskripsi menggunakan fungsi MySQL
-    foreach ($rsetKategori as $item) {
-        $item->kategori = DB::select('SELECT ketKategori(?) AS deskripsi', [$item->kategori])[0]->deskripsi ?? $item->kategori;
-    }
-
-    // Return the index view with the Kategori data
-    return view('v_kategori.index', compact('rsetKategori'));
-}
-
-
-
-
-
-
-    
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        // Return the create form view
-        return view('v_kategori.create');
+        $akategori = array('blank'=>'Pilih Kategori',
+                            'M'=>'Kategori Modal',
+                            'A'=>'Alat',
+                            'BHP'=>'Bahan Habis Pakai',
+                            'BTHP'=>'Bahan Tidak Habis Pakai'
+                            );
+        return view('v_kategori.create',compact('akategori'));
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        // Validate the request data
-        $validatedData = $this->validate($request, [
-            'deskripsi' => 'required|string|max:100',
-            'kategori' => 'required|in:M,A,BHP,BTHP',
-        ]);        
-
-        // Create a new Kategori record
-        Kategori::create($validatedData);
-
-        // Redirect to the index page with a success message
-        return redirect()->route('kategori.index')->with('success', 'Data berhasil disimpan.');
+        $request->validate([
+            'deskripsi' => 'required', 
+            'kategori' => 'required',
+        ], [
+            'deskripsi.required' => 'Deskripsi harus diisi.',
+            'kategori.required' => 'Kategori harus diisi.',
+        ]);
+    
+        DB::beginTransaction();
+    
+        try {
+            Kategori::create([
+                'deskripsi' => $request->deskripsi,
+                'kategori' => $request->kategori,
+            ]);
+    
+            DB::commit();
+    
+            return redirect()->route('kategori.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->withErrors(['message' => 'Terjadi kesalahan saat menyimpan data.'])->withInput();
+        }
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(string $id)
     {
-        // Fetch the Kategori record with the specified ID
-        $rsetKategori = Kategori::find($id);
-
-        // Return the show view with the Kategori data
+        $rsetKategori = DB::table('kategori')
+            ->select('id', 'deskripsi', DB::raw('getKategori(kategori) as kat'))
+            ->where('id', $id)
+            ->first();
+    
         return view('v_kategori.show', compact('rsetKategori'));
     }
+    
+    
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(string $id)
     {
-        // Fetch the Kategori record with the specified ID
-        $rsetKategori = Kategori::find($id);
+        $akategori = array('blank'=>'Pilih Kategori',
+                            'M'=>'Modal',
+                            'A'=>'Alat',
+                            'BHP'=>'Bahan Habis Pakai',
+                            'BTHP'=>'Bahan Tidak Habis Pakai'
+                            );
 
-        // Return the edit form view with the Kategori data
-        return view('v_kategori.edit', compact('rsetKategori'));
+        $rsetKategori = Kategori::find($id);
+        return view('v_kategori.edit', compact('rsetKategori','akategori'));
+
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        // Validate the request data
-        $validatedData = $this->validate($request, [
-            'deskripsi' => 'required|string|max:100',
-            'kategori' => 'required|in:M,A,BHP,BTHP',
-        ]);        
+    public function update(Request $request, string $id)
+{
+    $request->validate([
+        'deskripsi' => 'required',
+        'kategori' => 'required',
+    ]);
 
-        // Fetch the Kategori record with the specified ID
-        $rsetKategori = Kategori::find($id);
+    $rsetKategori = Kategori::find($id);
+    $rsetKategori->update($request->all());
 
-        // Update the Kategori record
-        $rsetKategori->update($validatedData);
+    return redirect()->route('kategori.index')->with(['success' => 'Data Berhasil Diubah!']);
+}
 
-        // Redirect to the index page with a success message
-        return redirect()->route('kategori.index')->with('success', 'Data berhasil diubah.');
-    }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        if (DB::table('barang')->where('kategori_id', $id)->exists()){
-            return redirect()->route('kategori.index')->with(['Gagal' => 'Data Gagal Dihapus!']);
+        if (DB::table('barang')->where('kategori_id', $id)->exists()){ 
+            return redirect()->route('kategori.index')->with(['Gagal' => 'Gagal dihapus']);
         } else {
-            $rsetKategori = Kategori::find($id);
-            $rsetKategori->delete();
-            return redirect()->route('kategori.index')->with(['success' => 'Data Berhasil Dihapus!']);
-        }    
+            $rseKategori = Kategori::find($id);
+            $rseKategori->delete();
+            return redirect()->route('kategori.index')->with(['Success' => 'Berhasil dihapus']);
+        }
     }
+
 }

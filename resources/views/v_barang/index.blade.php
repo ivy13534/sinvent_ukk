@@ -3,39 +3,36 @@
 @section('content')
     <div class="container">
         <div class="row">
-            <div class="col-md-6 bg-light text-left">
-            </div>
-            <div class="col-md-6 bg-light text-right">
-                <form action="/barang" method="GET"
-                class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                @csrf
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" value="{{ request('search') }}">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-search fa-sm"></i>
+            <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <a href="{{ route('barang.create') }}" class="btn btn-md btn-success">TAMBAH BARANG</a>
+                        <form action="/barang" method="GET" class="d-flex">
+                                @csrf
+                        <div class="input-group">
+                         <input type="text" name="search" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" value="{{ request('search') }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search fa-sm"></i>
                             </button>
                         </div>
                 </div>
             </form>
-            </div>
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <a href="{{ route('barang.create') }}" class="btn btn-md btn-success mb-3">TAMBAH BARANG</a>
                     </div>
                 </div>
+            </div>
                 @if(session('Success'))
-    <div class="alert alert-success">
-        {{ session('Success') }}
-    </div>
-@endif
+                    <div class="alert alert-success">
+                        {{ session('Success') }}
+                    </div>
+                @endif
 
-@if(session('Gagal'))
-    <div class="alert alert-danger">
-        {{ session('Gagal') }}
-    </div>
-@endif
+                @if(session('Gagal'))
+                    <div class="alert alert-danger">
+                        {{ session('Gagal') }}
+                    </div>
+                @endif
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -45,7 +42,6 @@
                             <th>SPESIFIKASI</th>
                             <th>STOK</th>
                             <th>KATEGORI</th>
-                            <!-- <th>FOTO</th> -->
                             <th style="width: 15%">AKSI</th>
 
                         </tr>
@@ -58,8 +54,7 @@
                                 <td>{{ $rowbarang->seri  }}</td>
                                 <td>{{ $rowbarang->spesifikasi  }}</td>
                                 <td>{{ $rowbarang->stok  }}</td>
-                                <td>{{ $rowbarang->kategori_deskripsi }}</td>
-                            
+                                <td>{{ $rowbarang->kategori_id }} - {{ $rowbarang->deskripsi }}</td>
                                 <td class="text-center"> 
                                     <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('barang.destroy', $rowbarang->id) }}" method="POST">
                                         <a href="{{ route('barang.show', $rowbarang->id) }}" class="btn btn-sm btn-dark"><i class="fa fa-eye"></i></a>
@@ -73,13 +68,13 @@
                             </tr>
                         @empty
                             <div class="alert">
-                                Data Siswa belum tersedia
+                                Data belum tersedia
                             </div>
                         @endforelse
                     </tbody>
                     
                 </table>
-                {{-- {{ $barang->links() }} --}}
+                {{-- {{ $siswa->links() }} --}}
 
             </div>
         </div>

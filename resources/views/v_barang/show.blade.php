@@ -1,14 +1,13 @@
 @extends('layouts.adm-main')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-10">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Show Barang</h4>
-                </div>
-                <div class="card-body">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+               <div class="card border-0 shadow rounded">
+                    <div class="card-body">
+                            @csrf
                         <table class="table">
                             <tr>
                                 <td>Merk</td>
@@ -27,18 +26,26 @@
                                 <td>{{ $rsetBarang->stok }}</td>
                             </tr>
                             <tr>
-                                <td>Kategori</td>
-				<td>{{ $rsetBarang->kategori_deskripsi }}</td>
+                                <td>Kategori ID</td>
+                                <td>{{ $rsetBarang->kategori_id }}</td>
+                            </tr>
+                            <tr>
+                                <td>Deskripsi Kategori</td>
+                                <td>{{ $deskripsiKategori->kategori->deskripsi }}</td>
                             </tr>
                         </table>
                     </div>
+               </div>
+            </div>
+        </div>
+        <div class="flex">
+            <div class="col-md-12  text-center">
+            </div>
+            <div class="col-md-12  text-center">
+                
+
+                <a href="{{ route('barang.index') }}" class="btn btn-md btn-primary mt-3">Back</a>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-10  text-center">
-            <a href="{{ route('barang.index') }}" class="btn btn-md btn-primary mb-3">Back</a>
-        </div>
-    </div>
-</div>
 @endsection

@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('barangmasuk', function (Blueprint $table) {
-            $table->id();
-            $table->date('tgl_masuk');
-            $table->smallInteger('qty_masuk')->default(1);
-            $table->foreignId('barang_id');
-            $table->foreign('barang_id')->references('id')->on('barang')->onDelete('restrict');
+        Schema::create('kategori', function (Blueprint $table) {
+            $table->tinyIncrements('id');
+            $table->string('deskripsi',100)->nullable();
+            $table->enum('kategori',['M','A','BHP','BTHP'])->default('A');
             $table->timestamps();
         });
     }
@@ -26,7 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('barangmasuk');
+        Schema::dropIfExists('kategori');
     }
-
 };
